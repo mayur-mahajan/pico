@@ -1,0 +1,106 @@
+[package]
+edition      = "2024"
+name         = "pico"
+rust-version = "1.88"
+version      = "0.1.0"
+
+[[bin]]
+name = "pico"
+path = "./src/bin/main.rs"
+
+[dependencies]
+esp-hal = { version = "1.2.2", features = ["esp32c6", "log-04", "unstable"] }
+
+esp-rtos = { version = "0.4.0", features = [
+  "embassy",
+  "esp-alloc",
+  "esp-radio",
+  "esp32c6",
+  "log-04",
+] }
+
+esp-bootloader-esp-idf = { version = "0.6.0", features = ["esp32c6", "log-04"] }
+log                    = "0.4.27"
+
+embassy-net = { version = "0.9.1", features = [
+  "dhcpv4",
+  "dns",
+  "log",
+  "medium-ethernet",
+  "tcp",
+] }
+# Plain HTTP only: reqwless' embedded-tls cannot offer the RSA signatures adsb.lol's certificate
+# needs (HandshakeFailure). Re-enable "embedded-tls" (+ the `der` "heapless" workaround) if a
+# TLS-capable client is available.
+reqwless = { version = "0.14.0", default-features = false, features = ["log"] }
+# der = { version = "0.8", default-features = false, features = ["heapless"] }
+embassy-embedded-hal = "0.6.0"
+embassy-sync = "0.8"
+embedded-io = "0.7.1"
+embedded-io-async = "0.7.0"
+embedded-hal-async = "1.0.0"
+# embedded-hal-bus = "0.3.0"
+esp-alloc = { version = "0.11.0", features = ["esp32c6"] }
+esp-backtrace = { version = "0.20.0", features = [
+  "esp32c6",
+  "panic-handler",
+  "println",
+] }
+esp-println = { version = "0.18.0", features = ["esp32c6", "log-04"] }
+# for more networking protocol support see https://crates.io/crates/edge-net
+# bt-hci = "0.6.0"
+embassy-executor = { version = "0.10.0", features = ["log"] }
+embassy-time = { version = "0.5.0", features = ["log"] }
+esp-radio = { version = "1.0.0-beta.1", features = [
+  # "ble",  # re-enable with bt-hci / trouble-host below
+  # "coex", # needed when Wi-Fi and BLE run together
+  "esp-alloc",
+  "esp32c6",
+  "log-04",
+  "unstable",
+  "wifi",
+] }
+# smoltcp = { version = "0.12.0", default-features = false, features = [
+#   "log",
+#   "medium-ethernet",
+#   "multicast",
+#   "proto-dhcpv4",
+#   "proto-dns",
+#   "proto-ipv4",
+#   "socket-dns",
+#   "socket-icmp",
+#   "socket-raw",
+#   "socket-tcp",
+#   "socket-udp",
+# ] }
+# trouble-host = { version = "0.5.0", features = ["gatt"] }
+# mipidsi = "0.10.0"  # replaced by twine-drivers
+# embedded-graphics = "0.8.2"
+# embedded-graphics-framebuf = "0.5.0"
+critical-section = "1.2.0"
+static_cell      = "2.1.1"
+
+twine = { git = "https://github.com/mayur-mahajan/twine.git", default-features = false, features = ["log", "color-rgb565-swapped", "perf-monitor", "montserrat-14", "montserrat-20", "montserrat-28"] }
+twine-drivers = { git = "https://github.com/mayur-mahajan/twine.git", features = ["async", "log", "st7789"] }
+twine-embassy = { git = "https://github.com/mayur-mahajan/twine.git" }
+
+[profile.dev]
+# Rust debug is too slow.
+# For debug builds always builds with some optimization
+opt-level = "s"
+
+[profile.release]
+codegen-units    = 1     # LLVM can perform better optimizations using a single thread
+debug            = 2
+debug-assertions = false
+incremental      = false
+lto              = 'fat'
+opt-level        = 's'
+overflow-checks  = false
+
+# The Wi-Fi blobs need optimization level 2 or 3 to work.
+[profile.dev.package.esp-radio]
+opt-level = 3
+
+[profile.release.package.esp-radio]
+opt-level = 3
