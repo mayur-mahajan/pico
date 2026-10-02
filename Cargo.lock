@@ -1666,8 +1666,6 @@ dependencies = [
  "reqwless",
  "static_cell",
  "twine",
- "twine-drivers",
- "twine-embassy",
 ]
 
 [[package]]
@@ -2292,12 +2290,15 @@ dependencies = [
 [[package]]
 name = "twine"
 version = "0.1.0"
-source = "git+https://github.com/mayur-mahajan/twine.git#3eb91465f22d58832136ce50a466f2a3dce8fadc"
+source = "git+https://github.com/mayur-mahajan/twine.git#38da80f7ac6b24f943aa1ebe58323d55d477372a"
 dependencies = [
  "twine-anim",
  "twine-assets",
  "twine-core",
+ "twine-drivers",
+ "twine-embassy",
  "twine-engine",
+ "twine-fs",
  "twine-hal",
  "twine-image",
  "twine-layout",
@@ -2306,6 +2307,7 @@ dependencies = [
  "twine-style",
  "twine-text",
  "twine-theme",
+ "twine-vector",
  "twine-view",
  "twine-widgets",
  "twine-widgets-ext",
@@ -2314,7 +2316,7 @@ dependencies = [
 [[package]]
 name = "twine-anim"
 version = "0.1.0"
-source = "git+https://github.com/mayur-mahajan/twine.git#3eb91465f22d58832136ce50a466f2a3dce8fadc"
+source = "git+https://github.com/mayur-mahajan/twine.git#38da80f7ac6b24f943aa1ebe58323d55d477372a"
 dependencies = [
  "twine-core",
 ]
@@ -2322,7 +2324,7 @@ dependencies = [
 [[package]]
 name = "twine-assets"
 version = "0.1.0"
-source = "git+https://github.com/mayur-mahajan/twine.git#3eb91465f22d58832136ce50a466f2a3dce8fadc"
+source = "git+https://github.com/mayur-mahajan/twine.git#38da80f7ac6b24f943aa1ebe58323d55d477372a"
 dependencies = [
  "twine-text",
 ]
@@ -2330,7 +2332,7 @@ dependencies = [
 [[package]]
 name = "twine-core"
 version = "0.1.0"
-source = "git+https://github.com/mayur-mahajan/twine.git#3eb91465f22d58832136ce50a466f2a3dce8fadc"
+source = "git+https://github.com/mayur-mahajan/twine.git#38da80f7ac6b24f943aa1ebe58323d55d477372a"
 dependencies = [
  "log",
  "thiserror",
@@ -2339,7 +2341,7 @@ dependencies = [
 [[package]]
 name = "twine-drivers"
 version = "0.1.0"
-source = "git+https://github.com/mayur-mahajan/twine.git#3eb91465f22d58832136ce50a466f2a3dce8fadc"
+source = "git+https://github.com/mayur-mahajan/twine.git#38da80f7ac6b24f943aa1ebe58323d55d477372a"
 dependencies = [
  "embedded-hal 1.0.0",
  "embedded-hal-async",
@@ -2352,7 +2354,7 @@ dependencies = [
 [[package]]
 name = "twine-embassy"
 version = "0.1.0"
-source = "git+https://github.com/mayur-mahajan/twine.git#3eb91465f22d58832136ce50a466f2a3dce8fadc"
+source = "git+https://github.com/mayur-mahajan/twine.git#38da80f7ac6b24f943aa1ebe58323d55d477372a"
 dependencies = [
  "embassy-futures",
  "embassy-time",
@@ -2365,33 +2367,46 @@ dependencies = [
 [[package]]
 name = "twine-engine"
 version = "0.1.0"
-source = "git+https://github.com/mayur-mahajan/twine.git#3eb91465f22d58832136ce50a466f2a3dce8fadc"
+source = "git+https://github.com/mayur-mahajan/twine.git#38da80f7ac6b24f943aa1ebe58323d55d477372a"
 dependencies = [
  "bitflags 2.13.2",
  "heapless 0.8.0",
  "thiserror",
  "twine-anim",
  "twine-core",
+ "twine-fs",
  "twine-hal",
  "twine-image",
  "twine-layout",
  "twine-render",
  "twine-style",
  "twine-text",
+ "twine-vector",
+]
+
+[[package]]
+name = "twine-fs"
+version = "0.1.0"
+source = "git+https://github.com/mayur-mahajan/twine.git#38da80f7ac6b24f943aa1ebe58323d55d477372a"
+dependencies = [
+ "heapless 0.8.0",
+ "thiserror",
+ "twine-core",
 ]
 
 [[package]]
 name = "twine-hal"
 version = "0.1.0"
-source = "git+https://github.com/mayur-mahajan/twine.git#3eb91465f22d58832136ce50a466f2a3dce8fadc"
+source = "git+https://github.com/mayur-mahajan/twine.git#38da80f7ac6b24f943aa1ebe58323d55d477372a"
 dependencies = [
+ "embassy-time",
  "twine-core",
 ]
 
 [[package]]
 name = "twine-image"
 version = "0.1.0"
-source = "git+https://github.com/mayur-mahajan/twine.git#3eb91465f22d58832136ce50a466f2a3dce8fadc"
+source = "git+https://github.com/mayur-mahajan/twine.git#38da80f7ac6b24f943aa1ebe58323d55d477372a"
 dependencies = [
  "bitflags 2.13.2",
  "heapless 0.8.0",
@@ -2403,7 +2418,7 @@ dependencies = [
 [[package]]
 name = "twine-layout"
 version = "0.1.0"
-source = "git+https://github.com/mayur-mahajan/twine.git#3eb91465f22d58832136ce50a466f2a3dce8fadc"
+source = "git+https://github.com/mayur-mahajan/twine.git#38da80f7ac6b24f943aa1ebe58323d55d477372a"
 dependencies = [
  "bitflags 2.13.2",
  "twine-core",
@@ -2413,7 +2428,7 @@ dependencies = [
 [[package]]
 name = "twine-reactive"
 version = "0.1.0"
-source = "git+https://github.com/mayur-mahajan/twine.git#3eb91465f22d58832136ce50a466f2a3dce8fadc"
+source = "git+https://github.com/mayur-mahajan/twine.git#38da80f7ac6b24f943aa1ebe58323d55d477372a"
 dependencies = [
  "critical-section",
  "heapless 0.8.0",
@@ -2424,7 +2439,7 @@ dependencies = [
 [[package]]
 name = "twine-render"
 version = "0.1.0"
-source = "git+https://github.com/mayur-mahajan/twine.git#3eb91465f22d58832136ce50a466f2a3dce8fadc"
+source = "git+https://github.com/mayur-mahajan/twine.git#38da80f7ac6b24f943aa1ebe58323d55d477372a"
 dependencies = [
  "thiserror",
  "twine-core",
@@ -2433,7 +2448,7 @@ dependencies = [
 [[package]]
 name = "twine-style"
 version = "0.1.0"
-source = "git+https://github.com/mayur-mahajan/twine.git#3eb91465f22d58832136ce50a466f2a3dce8fadc"
+source = "git+https://github.com/mayur-mahajan/twine.git#38da80f7ac6b24f943aa1ebe58323d55d477372a"
 dependencies = [
  "bitflags 2.13.2",
  "twine-anim",
@@ -2446,7 +2461,7 @@ dependencies = [
 [[package]]
 name = "twine-text"
 version = "0.1.0"
-source = "git+https://github.com/mayur-mahajan/twine.git#3eb91465f22d58832136ce50a466f2a3dce8fadc"
+source = "git+https://github.com/mayur-mahajan/twine.git#38da80f7ac6b24f943aa1ebe58323d55d477372a"
 dependencies = [
  "bitflags 2.13.2",
  "twine-core",
@@ -2456,7 +2471,7 @@ dependencies = [
 [[package]]
 name = "twine-theme"
 version = "0.1.0"
-source = "git+https://github.com/mayur-mahajan/twine.git#3eb91465f22d58832136ce50a466f2a3dce8fadc"
+source = "git+https://github.com/mayur-mahajan/twine.git#38da80f7ac6b24f943aa1ebe58323d55d477372a"
 dependencies = [
  "twine-assets",
  "twine-core",
@@ -2464,13 +2479,26 @@ dependencies = [
  "twine-image",
  "twine-style",
  "twine-text",
+ "twine-widgets",
+ "twine-widgets-ext",
+]
+
+[[package]]
+name = "twine-vector"
+version = "0.1.0"
+source = "git+https://github.com/mayur-mahajan/twine.git#38da80f7ac6b24f943aa1ebe58323d55d477372a"
+dependencies = [
+ "heapless 0.8.0",
+ "twine-core",
+ "twine-render",
 ]
 
 [[package]]
 name = "twine-view"
 version = "0.1.0"
-source = "git+https://github.com/mayur-mahajan/twine.git#3eb91465f22d58832136ce50a466f2a3dce8fadc"
+source = "git+https://github.com/mayur-mahajan/twine.git#38da80f7ac6b24f943aa1ebe58323d55d477372a"
 dependencies = [
+ "critical-section",
  "hashbrown 0.15.5",
  "twine-anim",
  "twine-core",
@@ -2482,6 +2510,7 @@ dependencies = [
  "twine-style",
  "twine-text",
  "twine-theme",
+ "twine-vector",
  "twine-widgets",
  "twine-widgets-ext",
 ]
@@ -2489,7 +2518,7 @@ dependencies = [
 [[package]]
 name = "twine-widgets"
 version = "0.1.0"
-source = "git+https://github.com/mayur-mahajan/twine.git#3eb91465f22d58832136ce50a466f2a3dce8fadc"
+source = "git+https://github.com/mayur-mahajan/twine.git#38da80f7ac6b24f943aa1ebe58323d55d477372a"
 dependencies = [
  "bitflags 2.13.2",
  "twine-core",
@@ -2498,12 +2527,13 @@ dependencies = [
  "twine-render",
  "twine-style",
  "twine-text",
+ "twine-vector",
 ]
 
 [[package]]
 name = "twine-widgets-ext"
 version = "0.1.0"
-source = "git+https://github.com/mayur-mahajan/twine.git#3eb91465f22d58832136ce50a466f2a3dce8fadc"
+source = "git+https://github.com/mayur-mahajan/twine.git#38da80f7ac6b24f943aa1ebe58323d55d477372a"
 dependencies = [
  "twine-anim",
  "twine-core",
@@ -2512,7 +2542,7 @@ dependencies = [
  "twine-render",
  "twine-style",
  "twine-text",
- "twine-theme",
+ "twine-vector",
  "twine-widgets",
 ]
 

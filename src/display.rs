@@ -24,7 +24,7 @@ const ROTATION: Rotation = Rotation::Deg90;
 
 /// An ST7789 whose visible 172 x 320 window sits at column 34 of the controller's
 /// 240 x 320 memory. Other panels on the same driver only need another size/offset.
-static PANEL: twine_drivers::mipi_dcs::PanelSpec = twine_drivers::st7789::ST7789.with_size(172, 320, 34, 0);
+static PANEL: twine::drivers::mipi_dcs::PanelSpec = twine::drivers::st7789::ST7789.with_size(172, 320, 34, 0);
 
 /// The display pins and peripherals: SCK = GPIO7, MOSI = GPIO6, CS = GPIO14, DC = GPIO15,
 /// RST = GPIO21.
@@ -83,7 +83,7 @@ pub async fn init(pins: Pins) -> impl AsyncDisplayDriver {
     let spi = SpiDeviceWithConfig::new(bus, Output::new(pins.cs, Level::High, OutputConfig::default()), lcd_config);
     let dc = Output::new(pins.dc, Level::Low, OutputConfig::default());
     let rst = Output::new(pins.rst, Level::High, OutputConfig::default());
-    twine_drivers::st7789::new_async(spi, dc, Some(rst), &PANEL, ROTATION, &mut embassy_time::Delay)
+    twine::drivers::st7789::new_async(spi, dc, Some(rst), &PANEL, ROTATION, &mut embassy_time::Delay)
         .await
         .unwrap_or_else(|e| panic!("display init failed: {e:?}"))
 }

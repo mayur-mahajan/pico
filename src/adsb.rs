@@ -47,16 +47,16 @@ pub enum Update {
     Failed,
 }
 
-pub static UPDATES: Channel<Update, 4> = Channel::new();
-
 /// Signal it to fetch right away instead of waiting for the next poll.
 pub static REFRESH: Signal<CriticalSectionRawMutex, ()> = Signal::new();
 
 /// The response is ~0.7 kB per aircraft; leave room for headers and odd fields.
 const RX_BUF: usize = 4096;
 
+/// Polls `/v2/closest` every [`POLL_SECS`] (or when [`REFRESH`] is signalled) and sends each
+/// result to the UI through `updates`.
 #[embassy_executor::task]
-pub async fn task(stack: Stack<'static>) {
+pub async fn task(stack: Stack<'static>, updates: &'static Channel<Update, 4>) {
     static RX: ConstStaticCell<[u8; RX_BUF]> = ConstStaticCell::new([0; RX_BUF]);
     let rx = RX.take();
 
@@ -77,7 +77,7 @@ pub async fn task(stack: Stack<'static>) {
                 Update::Failed
             }
         };
-        UPDATES.try_send(update).ok();
+        updates.try_send(update).ok();
         // Wait for the next poll, or until the button asks for a refresh.
         with_timeout(Duration::from_secs(POLL_SECS), REFRESH.wait()).await.ok();
         REFRESH.reset();

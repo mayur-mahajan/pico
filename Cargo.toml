@@ -80,9 +80,17 @@ esp-radio = { version = "1.0.0-beta.1", features = [
 critical-section = "1.2.0"
 static_cell      = "2.1.1"
 
-twine = { git = "https://github.com/mayur-mahajan/twine.git", default-features = false, features = ["log", "color-rgb565-swapped", "perf-monitor", "montserrat-14", "montserrat-20", "montserrat-28"] }
-twine-drivers = { git = "https://github.com/mayur-mahajan/twine.git", features = ["async", "log", "st7789"] }
-twine-embassy = { git = "https://github.com/mayur-mahajan/twine.git" }
+# The facade: `embassy` brings the async run loop and platform, `drivers-st7789` the panel driver
+# (and its byte-swapped RGB565 colour format).
+twine = { git = "https://github.com/mayur-mahajan/twine.git", default-features = false, features = [
+  "drivers-st7789",
+  "embassy",
+  "log",
+  "montserrat-14",
+  "montserrat-20",
+  "montserrat-28",
+  "perf-monitor",
+] }
 
 [profile.dev]
 # Rust debug is too slow.

@@ -5,9 +5,17 @@ use alloc::format;
 use alloc::string::String;
 use twine::prelude::*;
 
-use crate::adsb::{Aircraft, Altitude, UPDATES, Update};
-use crate::clock::LOCAL_SECS;
+use crate::adsb::{Aircraft, Altitude, Update};
 use crate::config::AIRPORT_NAME;
+
+/// What the UI reads from the rest of the firmware; `main` owns the objects behind it.
+#[derive(Clone, Copy)]
+pub struct Ports {
+    /// Results of the ADS-B poller, in order.
+    pub updates: &'static Channel<Update, 4>,
+    /// Local seconds since midnight, once the time is known.
+    pub local_secs: &'static Latest<Option<u32>>,
+}
 
 const BACKGROUND: Color = Color::hex(0x0B_12_20);
 const CARD: Color = Color::hex(0x16_23_3A);
@@ -31,16 +39,15 @@ enum Screen {
     NoAircraft,
 }
 
-pub fn app(cx: Scope) -> impl View {
+pub fn app(cx: Scope, ports: Ports) -> impl View {
     let screen = cx.signal(Screen::Loading);
-    let secs = cx.signal(None::<u32>);
+    let secs = cx.watch(ports.local_secs);
     // A failed request keeps the last screen; the first success replaces "Connecting...".
-    cx.on_message(&UPDATES, move |u: Update| match u {
+    cx.on_message(ports.updates, move |u: Update| match u {
         Update::Aircraft(a) => screen.set(Screen::Aircraft(a)),
         Update::NoAircraft => screen.set(Screen::NoAircraft),
         Update::Failed => {}
     });
-    cx.on_message(&LOCAL_SECS, move |s: u32| secs.set(Some(s)));
 
     let loading = move || screen.get() == Screen::Loading;
     let has_aircraft = move || matches!(screen.get(), Screen::Aircraft(_));
@@ -58,7 +65,7 @@ pub fn app(cx: Scope) -> impl View {
 }
 
 /// The airport on the left, the local time on the right.
-fn header(secs: Signal<Option<u32>>) -> impl View {
+fn header(secs: ReadSignal<Option<u32>>) -> impl View {
     row((
         label(text!("Nearest aircraft to {AIRPORT_NAME}"))
             .font(&fonts::MONTSERRAT_14)
@@ -68,16 +75,16 @@ fn header(secs: Signal<Option<u32>>) -> impl View {
             .text_color(TIME)
             .test_id("time"),
     ))
-    .justify(FlexAlign::SpaceBetween)
-    .align_items(FlexAlign::Center)
+    .justify(MainAlign::SpaceBetween)
+    .align_items(CrossAlign::Center)
     .size(Length::Pct(100), Length::Content)
 }
 
 /// A centered status message filling the space under the header.
 fn message(text: String) -> impl View {
     column((label(text).font(&fonts::MONTSERRAT_20).text_color(MUTED),))
-        .justify(FlexAlign::Center)
-        .align_items(FlexAlign::Center)
+        .justify(MainAlign::Center)
+        .align_items(CrossAlign::Center)
         .flex_grow(1)
         .size(Length::Pct(100), Length::Content)
 }
@@ -101,14 +108,14 @@ fn aircraft_card(screen: Signal<Screen>) -> impl View {
                 .text_color(TEXT)
                 .bg(CHIP)
                 .radius(6)
-                .padding_hor(8)
-                .padding_ver(3),
+                .padding_x(8)
+                .padding_y(3),
             label(text!("{}", field(|a| a.registration.clone())()))
                 .font(&fonts::MONTSERRAT_14)
                 .text_color(MUTED),
         ))
         .gap(10)
-        .align_items(FlexAlign::Center)
+        .align_items(CrossAlign::Center)
         .size(Length::Pct(100), Length::Content),
         row((
             stat(|| String::from("ALT"), ALTITUDE, field(altitude)),
@@ -121,7 +128,7 @@ fn aircraft_card(screen: Signal<Screen>) -> impl View {
     ))
     .gap(12)
     .flex_grow(1)
-    .justify(FlexAlign::Center)
+    .justify(MainAlign::Center)
     .size(Length::Pct(100), Length::Content)
 }
 
@@ -132,11 +139,11 @@ fn stat(caption: impl Fn() -> String + 'static, color: Color, value: impl Fn() -
         label(text!("{}", value())).font(&fonts::MONTSERRAT_20).text_color(color),
     ))
     .gap(2)
-    .padding_ver(8)
-    .padding_hor(4)
+    .padding_y(8)
+    .padding_x(4)
     .bg(CARD)
     .radius(8)
-    .align_items(FlexAlign::Center)
+    .align_items(CrossAlign::Center)
     .flex_grow(1)
 }
 

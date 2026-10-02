@@ -4,10 +4,7 @@
 use core::sync::atomic::{AtomicU32, Ordering};
 
 use embassy_time::{Duration, Instant, Ticker};
-use twine::prelude::Channel;
-
-/// Local (Pacific) seconds since midnight, once a second, as soon as the time is known.
-pub static LOCAL_SECS: Channel<u32, 4> = Channel::new();
+use twine::prelude::Latest;
 
 /// Unix seconds at boot; 0 while the time is unknown.
 static UNIX_AT_BOOT: AtomicU32 = AtomicU32::new(0);
@@ -27,13 +24,15 @@ fn unix_now() -> Option<u32> {
     }
 }
 
+/// Publishes the local (Pacific) seconds since midnight to `local_secs` once a second, as soon as
+/// the time is known (`None` until then).
 #[embassy_executor::task]
-pub async fn task() {
+pub async fn task(local_secs: &'static Latest<Option<u32>>) {
     let mut ticker = Ticker::every(Duration::from_secs(1));
     loop {
         if let Some(unix) = unix_now() {
             let local = (i64::from(unix) + i64::from(pacific_offset(unix))).rem_euclid(86_400);
-            LOCAL_SECS.try_send(local as u32).ok();
+            local_secs.set(Some(local as u32));
         }
         ticker.next().await;
     }
